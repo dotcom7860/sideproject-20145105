@@ -1,0 +1,10 @@
+우선 순서
+1) 해당 폴더로 이동 (cd 폴더명)
+2) 파일 수정
+3) git add로 수정한 파일 추가(git add . : 변경한 파일 모두 포함)
+4) git commit -m "커밋명" : 추가한 파일들 커밋
+5) git push : 변경한 파일을 gitHub로 보냄
+
+그 외 
+git clone : gitHub에서 저장소를 복사해서 가져옴
+git pull : gitHub에만 있는 파일 가져옴

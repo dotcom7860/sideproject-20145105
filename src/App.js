@@ -1,14 +1,16 @@
 import React, { Component } from 'react';
 import TOC from "./components/TOC";
-import Content from "./components/Content";
+import ReadContent from "./components/ReadContent";
+import CreateContent from "./components/CreateContent";
 import Subject from "./components/Subject";
+import Control from "./components/Control";
 import './App.css';
 
 class App extends Component { 
   constructor(props){ //가장 먼저 실행되서 초기화를 담당
     super(props);
     this.state = {
-      mode:'read',
+      mode:'create',
       selected_content_id:1,
       welcome:{title:'Welcome', desc:'Hello.React!!'},
       subject:{title:'WEB', sub:'World wide Web!'},
@@ -20,10 +22,11 @@ class App extends Component {
     }
   }
   render() { //props,state가 바뀌면 render()함수가 다시 불린다. 즉, 화면을 다시 그린다.
-    var _title, _desc = null;
+    var _title, _desc,_article = null;
     if(this.state.mode=== 'welcome'){
       _title = this.state.welcome.title;
       _desc = this.state.welcome.desc;
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     }else if(this.state.mode === 'read'){
       var i = 0;
       while(i<this.state.contents.length){
@@ -34,6 +37,12 @@ class App extends Component {
         }
         i = i + 1;
       }
+      _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
+    }else if(this.state.mode === 'create'){
+      _article = <CreateContent onSubmit={function(_title,_desc){
+        //add content to this.state.contents
+        console.log(_title,_desc);
+      }.bind(this)}></CreateContent>;
     }
     return (
       <div className="App">
@@ -45,7 +54,12 @@ class App extends Component {
             selected_content_id:Number(id)
         });
         }.bind(this)} data={this.state.contents}></TOC>
-        <Content title={_title} desc={_desc}></Content>
+        <Control onChangeMode={function(_mode){
+          this.setState({
+            mode:_mode
+          });
+        }.bind(this)}></Control>
+        {_article}
       </div>
     );
   }

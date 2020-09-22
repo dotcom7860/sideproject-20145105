@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
 
-class CreateContent extends Component{
+class UpdateContent extends Component{
     render() {
+      console.log(this.props.data);
+      console.log("UpdateContent render()");
       return (
         <article>
-          <h3>Create</h3>
+          <h3>Update</h3>
           <form action="/create_process" method="post" onSubmit={function(e){
             e.preventDefault();
             this.props.onSubmit(
@@ -23,4 +25,4 @@ class CreateContent extends Component{
     }
   }
 
-  export default CreateContent;
+  export default UpdateContent;

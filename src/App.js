@@ -12,7 +12,7 @@ class App extends Component {
     super(props);
     this.max_content_id = 3;
     this.state = {
-      mode:'create',
+      mode:'welcome',
       selected_content_id:1,
       welcome:{title:'Welcome', desc:'Hello.React!!'},
       subject:{title:'WEB', sub:'World wide Web!'},
@@ -43,8 +43,8 @@ class App extends Component {
       _desc = this.state.welcome.desc;
       _article = <ReadContent title={_title} desc={_desc}></ReadContent>;
     }else if(this.state.mode === 'read'){
-        var _contents = this.getReadContent();
-      _article = <ReadContent title={_contents.title} desc={_contents.desc}></ReadContent>;
+        var _content = this.getReadContent();
+      _article = <ReadContent title={_content.title} desc={_content.desc}></ReadContent>;
     }else if(this.state.mode === 'create'){
       _article = <CreateContent onSubmit={function(_title,_desc){
         //add content to this.state.contents
@@ -60,21 +60,35 @@ class App extends Component {
         var newContents = Array.from(this.state.contents); //원본 복제를 복제한다. 값은 같지만 두 개를 비교했을 때 같지는 않다.
         newContents.push({id:this.max_content_id, title:_title,desc:_desc});
           this.setState(
-            {contents:newContents} 
+            {
+              contents:newContents,
+              mode : 'read',
+              selected_content_id:this.max_content_id
+            } 
           );
         console.log(_title,_desc);
       }.bind(this)}></CreateContent>;
     }else if(this.state.mode === 'update'){
-      _contents = this.getReadContent();
-      _article = <UpdateContent data={_contents}onSubmit={function(_title,_desc){
+      _content = this.getReadContent();
+      _article = <UpdateContent data={_content}
+      onSubmit={
+        function(_id,_title,_desc){
         //add content to this.state.contents
-        this.max_content_id = this.max_content_id+1;
-        var newContents = Array.from(this.state.contents);
-        newContents.push({id:this.max_content_id, title:_title,desc:_desc});
+        var _contents = Array.from(this.state.contents);
+        var i=0;
+        while(i < _contents.length){
+          if(_contents[i].id === _id){
+            _contents[i] = {id:_id,title:_title,desc:_desc};
+            break;
+          }
+          i = i+1;
+        }
           this.setState(
-            {contents:newContents} 
+            {
+              contents:_contents,
+              mode:'read'
+            }
           );
-        console.log(_title,_desc);
       }.bind(this)}></UpdateContent>;
     }
     return _article;
@@ -96,9 +110,28 @@ class App extends Component {
         </TOC>
         <Control 
           onChangeMode={function(_mode){
+            if(_mode === 'delete'){
+              if(window.confirm('really?')){
+                var _contents = Array.from(this.state.contents);
+                var i =0;
+                while(i < this.state.contents.length){
+                  if(_contents[i].id === this.state.selected_content_id){
+                    _contents.splice(i,1); //i번째 인덱스부터 하나를 지움(즉, 해당 인덱스를 지움)
+                    break;
+                  }
+                  i = i + 1;
+                }
+                this.setState({
+                  mode : 'welcome',
+                  contents:_contents
+                });
+                alert('deleted!');
+              }
+            } else{
             this.setState({
               mode:_mode
             });
+          }
           }.bind(this)}>
         </Control>
         {this.getContent()}
